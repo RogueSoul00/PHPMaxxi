@@ -1,5 +1,5 @@
 <?php
-require '../conexao.php';
+include("../index.php");
 
 // Recebe o ID do usuário via POST
 $data = json_decode(file_get_contents('php://input'), true);

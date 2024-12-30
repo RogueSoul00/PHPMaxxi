@@ -1,12 +1,12 @@
 <?php
-// Database connection settings
+// Configurações de conexão com o banco de dados
 $host = 'localhost';
 $dbname = 'MaxxiDatabase';
 $username = 'root';
 $password = '';
 
 try {
-    // Connecting to the database with PDO
+    // Conexão com o banco de dados usando PDO
     $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
@@ -14,16 +14,15 @@ try {
     die("Database connection error: " . $e->getMessage());
 }
 
-// Table name
-$tabela = 'tabela1';
+$table = 'tabela1';
 
 try {
-    // SQL query to get the data
-    $sql = "SELECT * FROM $tabela";
+    //Consulta SQL para obter os dados
+    $sql = "SELECT * FROM $table";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
 
-    // Get the results
+    // Obter os resultados
     $linhas = $stmt->fetchAll();
 } catch (PDOException $e) {
     die("Database query error: " . $e->getMessage());

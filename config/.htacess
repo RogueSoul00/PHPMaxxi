@@ -1,0 +1,21 @@
+# Impede o acesso direto ao arquivo database.php
+<Files "database.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Opcional: Bloqueie todos os arquivos PHP na pasta "config", se houver
+<Directory "config">
+    Order Allow,Deny
+    Deny from all
+</Directory>
+
+# Exibe um erro 403 ao tentar acessar arquivos bloqueados
+ErrorDocument 403 "Acesso negado."
+
+# Protege o proprio arquivo htacess de ser acessado publicamente
+<files ~ "^.*\.([Hh][Tt][Aa])">
+order allow,deny
+deny from all
+satisfy all
+</files>

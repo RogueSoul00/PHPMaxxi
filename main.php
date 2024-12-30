@@ -1,5 +1,5 @@
 <?php
-require 'conexao.php';
+require 'database.php';
 
 // Valida o parâmetro ID via GET
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -16,10 +16,10 @@ try {
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
 
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Verifica se o registro foi encontrado
-    if (!$usuario) {
+    if (!$user) {
         echo "<p>Usuário não encontrado.</p>";
         exit;
     }
@@ -88,26 +88,26 @@ try {
     </style>
     <script>
     
-    function adicionarNovaLinha() {
-        const tabela = document.getElementById('corpo-tabela'); // Seleciona o corpo da tabela
-        const novaLinha = document.createElement('tr'); // Cria uma nova linha
+    function addNewRow() {
+        const tableBody = document.getElementById('tafble-body'); // Seleciona o corpo da tabela
+        const newRow = document.createElement('tr'); // Cria uma nova linha
 
         // Adiciona as células com inputs vazios
-        novaLinha.innerHTML = `
+        newRow.innerHTML = `
             <td></td> <!-- ID, não será editável -->
-            <td><input type="text" name="nome" placeholder="Nome"></td>
+            <td><input type="text" name="name" placeholder="Nome"></td>
             <td><input type="email" name="email" placeholder="Email"></td>
-            <td><input type="text" name="telefone" placeholder="Telefone"></td>
+            <td><input type="text" name="telephone" placeholder="Telefone"></td>
             <td>
-                <button class="button" onclick="salvarNovaLinha(this)">Salvar</button>
+                <button class="button" onclick="saveNewRow(this)">Salvar</button>
             </td>
         `;
-        tabela.appendChild(novaLinha); // Adiciona a nova linha à tabela
+        tableBody.appendChild(newRow); // Adiciona a nova linha à tabela
     }
 
-    function salvarNovaLinha(botaoSalvar) {
-        const linha = botaoSalvar.parentElement.parentElement; // Encontra a linha em que o botão foi clicado
-        const inputs = linha.querySelectorAll('input'); // Obtém todos os inputs dessa linha
+    function saveNewRow(saveButton) {
+        const row = saveButton.parentElement.parentElement; // Encontra a linha em que o botão foi clicado
+        const inputs = row.querySelectorAll('input'); // Obtém todos os inputs dessa linha
         const data = {}; // Objeto para armazenar os dados do formulário
 
         // Coleta os dados dos inputs
@@ -214,23 +214,23 @@ try {
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nome</th>
+                    <th>Name</th>
                     <th>Email</th>
-                    <th>Telefone</th>
-                    <th>Ações</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-            <tbody  id="corpo-tabela">
-                <?php foreach ($linhas as $linha): ?>
-                    <tr id="linha-<?= htmlspecialchars($linha['id']) ?>">
-                        <td><?= htmlspecialchars($linha['id']) ?></td>
-                        <td class="campo-editavel" data-campo="nome"><?= htmlspecialchars($linha['nome']) ?></td>
-                        <td class="campo-editavel" data-campo="email"><?= htmlspecialchars($linha['email']) ?></td>
-                        <td class="campo-editavel" data-campo="telefone"><?= htmlspecialchars($linha['telefone']) ?></td>
+            <tbody  id="table-body">
+                <?php foreach ($rows as $row): ?>
+                    <tr id="row-<?= htmlspecialchars($row['id']) ?>">
+                        <td><?= htmlspecialchars($row['id']) ?></td>
+                        <td class="editable-field" data-field="name"><?= htmlspecialchars($linha['nome']) ?></td>
+                        <td class="editable-field" data-field="email"><?= htmlspecialchars($linha['email']) ?></td>
+                        <td class="editable-field" data-field="phone"><?= htmlspecialchars($linha['telefone']) ?></td>
                         <td>
-                            <button class="button edit-button botao-editar" onclick="habilitarEdicao(<?= htmlspecialchars($linha['id']) ?>)">Editar</button>
-                            <button class="button botao-salvar" style="display: none;" onclick="salvarEdicao(<?= htmlspecialchars($linha['id']) ?>)">Salvar</button>
-                            <button class="button botao-apagar" onclick="apagarUsuario(<?= htmlspecialchars($linha['id']) ?>)">Apagar</button>
+                            <button class="button edit-button" onclick="enableEdit(<?= htmlspecialchars($row['id']) ?>)">Editar</button>
+                            <button class="button save-button" style="display: none;" onclick="saveEdit(<?= htmlspecialchars($row['id']) ?>)">Salvar</button>
+                            <button class="button delete-button" onclick="apagarUsuario(<?= htmlspecialchars($row['id']) ?>)">Apagar</button>
                         </td>
                     </tr>
                 <?php endforeach; ?>

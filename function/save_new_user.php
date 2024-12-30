@@ -1,26 +1,26 @@
 <?php
-require '../conexao.php';
+require '../index.php';
 
 // Recebe os dados via POST
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Validação dos dados
-$nome = filter_var($data['nome'], FILTER_SANITIZE_STRING);
+$name = filter_var($data['name'], FILTER_SANITIZE_STRING);
 $email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
-$telefone = filter_var($data['telefone'], FILTER_SANITIZE_STRING);
+$telephone = filter_var($data['telephone'], FILTER_SANITIZE_STRING);
 
-if (!$nome || !$email || !$telefone) {
+if (!$name || !$email || !$telephone) {
     echo json_encode(['sucesso' => false, 'mensagem' => 'Dados inválidos']);
     exit;
 }
 
 try {
     // Inserção do novo usuário
-    $sql = "INSERT INTO tabela1 (nome, email, telefone) VALUES (:nome, :email, :telefone)";
+    $sql = "INSERT INTO tabela1 (nome, email, telephone) VALUES (:nome, :email, :telefone)";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':nome', $nome);
+    $stmt->bindParam(':nome', $name);
     $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':telefone', $telefone);
+    $stmt->bindParam(':telephone', $telephone);
     $stmt->execute();
 
     // Obtém o ID do novo usuário inserido
