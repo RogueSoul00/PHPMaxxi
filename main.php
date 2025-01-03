@@ -1,6 +1,4 @@
 <?php
-require 'database.php';
-
 // Valida o parâmetro ID via GET
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 

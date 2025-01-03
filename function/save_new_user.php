@@ -1,6 +1,4 @@
 <?php
-require '../index.php';
-
 // Recebe os dados via POST
 $data = json_decode(file_get_contents('php://input'), true);
 

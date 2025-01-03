@@ -1,6 +1,4 @@
 <?php
-include("../index.php");
-
 // Recebe o ID do usuário via POST
 $data = json_decode(file_get_contents('php://input'), true);
 $id = filter_var($data['id'], FILTER_VALIDATE_INT);

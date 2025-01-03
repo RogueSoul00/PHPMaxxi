@@ -1,6 +1,4 @@
 <?php
-require '../index.php';
-
 // Define o cabeçalho para JSON
 header('Content-Type: application/json');
 
