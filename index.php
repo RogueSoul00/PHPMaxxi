@@ -4,4 +4,6 @@ include("config/database.php");
 include("function/delete_user.php");
 include("function/save_new_user.php");
 include("function/save_edit.php");
+include("singin.php");
+include("singup.php");
 ?>

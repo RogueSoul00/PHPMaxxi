@@ -1,4 +1,5 @@
 <?php
+include("config/database.php");
 // Valida o parâmetro ID via GET
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
@@ -134,10 +135,10 @@ try {
 
 
         function habilitarEdicao(id) {
-            const linha = document.getElementById(`linha-${id}`);
-            const campos = linha.querySelectorAll('.campo-editavel');
-            const salvarBtn = linha.querySelector('.botao-salvar');
-            const editarBtn = linha.querySelector('.botao-editar');
+            const row = document.getElementById(`row-${id}`);
+            const campos = row.querySelectorAll('.campo-editavel');
+            const salvarBtn = row.querySelector('.botao-salvar');
+            const editarBtn = row.querySelector('.botao-editar');
 
             campos.forEach(campo => {
                 const valorAtual = campo.textContent;
@@ -149,8 +150,8 @@ try {
         }
 
         function salvarEdicao(id) {
-            const linha = document.getElementById(`linha-${id}`);
-            const inputs = linha.querySelectorAll('input');
+            const row = document.getElementById(`linha-${id}`);
+            const inputs = row.querySelectorAll('input');
             const data = {};
 
             inputs.forEach(input => {
@@ -171,8 +172,8 @@ try {
                         td.textContent = input.value;
                     });
 
-                    linha.querySelector('.botao-salvar').style.display = 'none';
-                    linha.querySelector('.botao-editar').style.display = 'inline-block';
+                    row.querySelector('.botao-salvar').style.display = 'none';
+                    row.querySelector('.botao-editar').style.display = 'inline-block';
                 } else {
                     alert('Erro ao salvar alterações: ' + result.mensagem);
                 }
@@ -191,7 +192,7 @@ try {
             .then(result => {
                 if (result.sucesso) {
                     alert("Usuário apagado com sucesso!");
-                    document.getElementById(`linha-${id}`).remove(); // Remove a linha da tabela
+                    document.getElementById(`row-${id}`).remove(); // Remove a linha da tabela
                 } else {
                     alert("Erro ao apagar o usuário: " + result.mensagem);
                 }
@@ -207,7 +208,7 @@ try {
         <button class="button" onclick="adicionarNovaLinha()">Novo Usuário</button>
     </div>
 
-    <?php if ($linhas): ?>
+    <?php if ($rows): ?>
         <table>
             <thead>
                 <tr>
@@ -222,9 +223,9 @@ try {
                 <?php foreach ($rows as $row): ?>
                     <tr id="row-<?= htmlspecialchars($row['id']) ?>">
                         <td><?= htmlspecialchars($row['id']) ?></td>
-                        <td class="editable-field" data-field="name"><?= htmlspecialchars($linha['nome']) ?></td>
-                        <td class="editable-field" data-field="email"><?= htmlspecialchars($linha['email']) ?></td>
-                        <td class="editable-field" data-field="phone"><?= htmlspecialchars($linha['telefone']) ?></td>
+                        <td class="editable-field" data-field="name"><?= htmlspecialchars($row['nome']) ?></td>
+                        <td class="editable-field" data-field="email"><?= htmlspecialchars($row['email']) ?></td>
+                        <td class="editable-field" data-field="telephone"><?= htmlspecialchars($row['telefone']) ?></td>
                         <td>
                             <button class="button edit-button" onclick="enableEdit(<?= htmlspecialchars($row['id']) ?>)">Editar</button>
                             <button class="button save-button" style="display: none;" onclick="saveEdit(<?= htmlspecialchars($row['id']) ?>)">Salvar</button>

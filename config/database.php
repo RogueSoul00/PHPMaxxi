@@ -1,7 +1,7 @@
 <?php
 // Configurações de conexão com o banco de dados
 $host = 'localhost';
-$dbname = 'MaxxiDatabase';
+$dbname = 'maxxidatabase';
 $username = 'root';
 $password = '';
 
@@ -23,7 +23,7 @@ try {
     $stmt->execute();
 
     // Obter os resultados
-    $linhas = $stmt->fetchAll();
+    $rows = $stmt->fetchAll();
 } catch (PDOException $e) {
     die("Database query error: " . $e->getMessage());
 }
