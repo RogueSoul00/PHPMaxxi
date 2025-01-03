@@ -1,4 +1,4 @@
-<?php
+<?php 
 include("config/database.php");
 // Valida o parâmetro ID via GET
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -27,13 +27,12 @@ try {
 }
 ?>
 
-
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Usuários</title>
+    <title>Manage Users</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -86,26 +85,27 @@ try {
         }
     </style>
     <script>
-    
+    // Função para adicionar uma nova linha na tabela
     function addNewRow() {
-        const tableBody = document.getElementById('tafble-body'); // Seleciona o corpo da tabela
+        const tableBody = document.getElementById('table-body'); // Seleciona o corpo da tabela
         const newRow = document.createElement('tr'); // Cria uma nova linha
 
-        // Adiciona as células com inputs vazios
+        // Adiciona células com inputs vazios
         newRow.innerHTML = `
             <td></td> <!-- ID, não será editável -->
-            <td><input type="text" name="name" placeholder="Nome"></td>
+            <td><input type="text" name="name" placeholder="Name"></td>
             <td><input type="email" name="email" placeholder="Email"></td>
-            <td><input type="text" name="telephone" placeholder="Telefone"></td>
+            <td><input type="text" name="telephone" placeholder="Phone"></td>
             <td>
-                <button class="button" onclick="saveNewRow(this)">Salvar</button>
+                <button class="button" onclick="saveNewRow(this)">Save</button>
             </td>
         `;
         tableBody.appendChild(newRow); // Adiciona a nova linha à tabela
     }
 
+    // Função para salvar a nova linha
     function saveNewRow(saveButton) {
-        const row = saveButton.parentElement.parentElement; // Encontra a linha em que o botão foi clicado
+        const row = saveButton.parentElement.parentElement; // Encontra a linha onde o botão foi clicado
         const inputs = row.querySelectorAll('input'); // Obtém todos os inputs dessa linha
         const data = {}; // Objeto para armazenar os dados do formulário
 
@@ -115,97 +115,98 @@ try {
         });
 
         // Realiza uma requisição POST para salvar os dados
-        fetch('funcoes/salvar_novo_usuario.php', {
+        fetch('functions/save_new_user.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
         .then(response => response.json())
         .then(result => {
-            if (result.sucesso) {
-                alert('Usuário adicionado com sucesso!');
+            if (result.success) {
+                alert('User added successfully!');
                 window.location.reload(); // Recarrega a página para atualizar a lista de usuários
             } else {
-                alert('Erro ao salvar o usuário: ' + result.mensagem);
+                alert('Error saving the user: ' + result.message);
             }
         })
-        .catch(error => console.error('Erro:', error));
+        .catch(error => console.error('Error:', error));
     }
 
+    // Função para habilitar a edição dos dados
+    function enableEdit(id) {
+        const row = document.getElementById(`row-${id}`);
+        const fields = row.querySelectorAll('.editable-field');
+        const saveBtn = row.querySelector('.save-button');
+        const editBtn = row.querySelector('.edit-button');
 
+        fields.forEach(field => {
+            const currentValue = field.textContent;
+            field.innerHTML = `<input type="text" value="${currentValue}" name="${field.dataset.field}">`;
+        });
 
-        function habilitarEdicao(id) {
-            const row = document.getElementById(`row-${id}`);
-            const campos = row.querySelectorAll('.campo-editavel');
-            const salvarBtn = row.querySelector('.botao-salvar');
-            const editarBtn = row.querySelector('.botao-editar');
+        saveBtn.style.display = 'inline-block';
+        editBtn.style.display = 'none';
+    }
 
-            campos.forEach(campo => {
-                const valorAtual = campo.textContent;
-                campo.innerHTML = `<input type="text" value="${valorAtual}" name="${campo.dataset.campo}">`;
-            });
+    // Função para salvar as alterações após a edição
+    function saveEdit(id) {
+        const row = document.getElementById(`row-${id}`);
+        const inputs = row.querySelectorAll('input');
+        const data = {};
 
-            salvarBtn.style.display = 'inline-block';
-            editarBtn.style.display = 'none';
-        }
+        inputs.forEach(input => {
+            data[input.name] = input.value;
+        });
+        data['id'] = id;
 
-        function salvarEdicao(id) {
-            const row = document.getElementById(`linha-${id}`);
-            const inputs = row.querySelectorAll('input');
-            const data = {};
+        fetch('functions/save_edit.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                inputs.forEach(input => {
+                    const td = input.parentElement;
+                    td.textContent = input.value;
+                });
 
-            inputs.forEach(input => {
-                data[input.name] = input.value;
-            });
-            data['id'] = id;
+                row.querySelector('.save-button').style.display = 'none';
+                row.querySelector('.edit-button').style.display = 'inline-block';
+            } else {
+                alert('Error saving changes: ' + result.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
 
-            fetch('funcoes/salvar_edicao.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.sucesso) {
-                    inputs.forEach(input => {
-                        const td = input.parentElement;
-                        td.textContent = input.value;
-                    });
-
-                    row.querySelector('.botao-salvar').style.display = 'none';
-                    row.querySelector('.botao-editar').style.display = 'inline-block';
-                } else {
-                    alert('Erro ao salvar alterações: ' + result.mensagem);
-                }
-            })
-            .catch(error => console.error('Erro:', error));
-        }
-
-        function apagarUsuario(id) {
-        if (confirm("Tem certeza que deseja apagar este usuário?")) {
-            fetch('funcoes/apagar_usuario.php', {
+    // Função para apagar o usuário
+    function deleteUser(id) {
+        if (confirm("Are you sure you want to delete this user?")) {
+            fetch('functions/delete_user.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: id })
             })
             .then(response => response.json())
             .then(result => {
-                if (result.sucesso) {
-                    alert("Usuário apagado com sucesso!");
+                if (result.success) {
+                    alert("User deleted successfully!");
                     document.getElementById(`row-${id}`).remove(); // Remove a linha da tabela
                 } else {
-                    alert("Erro ao apagar o usuário: " + result.mensagem);
+                    alert("Error deleting the user: " + result.message);
                 }
             })
-            .catch(error => console.error('Erro:', error));
+            .catch(error => console.error('Error:', error));
         }
     }
     </script>
 </head>
 <body>
     <div class="container">
-        <h1>Lista de Usuários</h1>
-        <button class="button" onclick="adicionarNovaLinha()">Novo Usuário</button>
+        <h1>User List</h1>
+        <button class="button" onclick="addNewRow()">New User</button>
     </div>
 
     <?php if ($rows): ?>
@@ -219,24 +220,24 @@ try {
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody  id="table-body">
+            <tbody id="table-body">
                 <?php foreach ($rows as $row): ?>
                     <tr id="row-<?= htmlspecialchars($row['id']) ?>">
                         <td><?= htmlspecialchars($row['id']) ?></td>
-                        <td class="editable-field" data-field="name"><?= htmlspecialchars($row['nome']) ?></td>
+                        <td class="editable-field" data-field="name"><?= htmlspecialchars($row['name']) ?></td>
                         <td class="editable-field" data-field="email"><?= htmlspecialchars($row['email']) ?></td>
-                        <td class="editable-field" data-field="telephone"><?= htmlspecialchars($row['telefone']) ?></td>
+                        <td class="editable-field" data-field="telephone"><?= htmlspecialchars($row['telephone']) ?></td>
                         <td>
-                            <button class="button edit-button" onclick="enableEdit(<?= htmlspecialchars($row['id']) ?>)">Editar</button>
-                            <button class="button save-button" style="display: none;" onclick="saveEdit(<?= htmlspecialchars($row['id']) ?>)">Salvar</button>
-                            <button class="button delete-button" onclick="apagarUsuario(<?= htmlspecialchars($row['id']) ?>)">Apagar</button>
+                            <button class="button edit-button" onclick="enableEdit(<?= htmlspecialchars($row['id']) ?>)">Edit</button>
+                            <button class="button save-button" style="display: none;" onclick="saveEdit(<?= htmlspecialchars($row['id']) ?>)">Save</button>
+                            <button class="button delete-button" onclick="deleteUser(<?= htmlspecialchars($row['id']) ?>)">Delete</button>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     <?php else: ?>
-        <p>Nenhum registro encontrado na tabela.</p>
+        <p>No records found in the table.</p>
     <?php endif; ?>
 </body>
 </html>

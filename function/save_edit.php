@@ -1,40 +1,39 @@
 <?php
-// Define o cabeçalho para JSON
+// Define the header for JSON
 header('Content-Type: application/json');
 
 try {
-    // Recebe os dados enviados via POST em formato JSON
+    // Receives the data sent via POST in JSON format
     $input = json_decode(file_get_contents('php://input'), true);
 
-    // Valida os campos recebidos
-    if (!isset($input['id'], $input['nome'], $input['email'], $input['telefone']
-    )) {
-        throw new Exception("Dados inválidos.");
+    // Validates the received fields
+    if (!isset($input['id'], $input['name'], $input['email'], $input['telephone'])) {
+        throw new Exception("Invalid data.");
     }
 
     $id = filter_var($input['id'], FILTER_VALIDATE_INT);
-    $nome = filter_var($input['nome'], FILTER_SANITIZE_STRING);
+    $name = filter_var($input['name'], FILTER_SANITIZE_STRING);
     $email = filter_var($input['email'], FILTER_SANITIZE_EMAIL);
-    $telephone = filter_var($input['telefone'], FILTER_SANITIZE_STRING);
+    $telephone = filter_var($input['telephone'], FILTER_SANITIZE_STRING);
 
-    if (!$id || !$nome || !$email || !$telephone) {
-        throw new Exception("Dados inválidos.");
+    if (!$id || !$name || !$email || !$telephone) {
+        throw new Exception("Invalid data.");
     }
 
-    // Atualiza os dados no banco
-    $sql = "UPDATE tabela1 SET nome = :nome, email = :email, telefone = 
-    :telefone WHERE id = :id";
+    // Update the data in the database
+    $sql = "UPDATE table1 SET name = :name, email = :email, telephone = :telephone WHERE id = :id";
     
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':nome', $nome);
+    $stmt->bindParam(':name', $name);
     $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':telefone', $telephone);
+    $stmt->bindParam(':telephone', $telephone);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
 
-    // Retorna sucesso
-    echo json_encode(['sucesso' => true]);
+    // Returns success
+    echo json_encode(['success' => true]);
 } catch (Exception $e) {
-    // Retorna erro
-    echo json_encode(['sucesso' => false, 'mensagem' => $e->getMessage()]);
+    // Returns error
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
+?>

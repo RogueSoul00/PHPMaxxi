@@ -1,23 +1,23 @@
 <?php
-// Recebe o ID do usuário via POST
+// Receives the user ID via POST
 $data = json_decode(file_get_contents('php://input'), true);
 var_dump($data);
-$id = filter_var($data['id'], FILTER_VALIDATE_INT);
+$userId = filter_var($data['id'], FILTER_VALIDATE_INT);
 
-if (!$id) {
-    echo json_encode(['sucesso' => false, 'mensagem' => 'ID invalido']);
+if (!$userId) {
+    echo json_encode(['success' => false, 'message' => 'Invalid ID']);
     exit;
 }
 
 try {
-    // Deleta o usuário da tabela
-    $sql = "DELETE FROM tabela1 WHERE id = :id";
+    // Deletes the user from the table
+    $sql = "DELETE FROM table1 WHERE id = :id";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
     $stmt->execute();
 
-    echo json_encode(['sucesso' => true]);
+    echo json_encode(['success' => true]);
 } catch (PDOException $e) {
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Erro ao apagar o usuário: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Error deleting user: ' . $e->getMessage()]);
 }
 ?>

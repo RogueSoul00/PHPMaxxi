@@ -1,31 +1,31 @@
-<?php
-// Recebe os dados via POST
+<?php 
+// Receives data via POST
 $data = json_decode(file_get_contents('php://input'), true);
 
-// Validação dos dados
+// Data validation
 $name = filter_var($data['name'], FILTER_SANITIZE_STRING);
 $email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
 $telephone = filter_var($data['telephone'], FILTER_SANITIZE_STRING);
 
 if (!$name || !$email || !$telephone) {
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Dados inválidos']);
+    echo json_encode(['success' => false, 'message' => 'Invalid data']);
     exit;
 }
 
 try {
-    // Inserção do novo usuário
-    $sql = "INSERT INTO tabela1 (nome, email, telephone) VALUES (:nome, :email, :telefone)";
+    // Insert new user
+    $sql = "INSERT INTO table1 (name, email, telephone) VALUES (:name, :email, :telephone)";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':nome', $name);
+    $stmt->bindParam(':name', $name);
     $stmt->bindParam(':email', $email);
     $stmt->bindParam(':telephone', $telephone);
     $stmt->execute();
 
-    // Obtém o ID do novo usuário inserido
+    // Get the ID of the newly inserted user
     $id = $conn->lastInsertId();
 
-    echo json_encode(['sucesso' => true, 'id' => $id]); // Retorna o ID gerado para atualizar a linha da tabela
+    echo json_encode(['success' => true, 'id' => $id]); // Return the generated ID to update the table row
 } catch (PDOException $e) {
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Erro ao salvar usuário: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Error saving user: ' . $e->getMessage()]);
 }
 ?>
